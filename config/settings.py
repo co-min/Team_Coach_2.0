@@ -1,0 +1,11 @@
+# window size, fullscreen, path 
+
+SCREEN_SIZE = (1980, 1080)
+FULLSCREEN =True
+BACKGROUND_COLOR = "black"
+
+
+# Duration
+FIXATION_DURATION = 1.0
+FEEDBACK_DURATION = 2.0
+SCORE_DURATION = 1.0
