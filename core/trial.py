@@ -3,6 +3,7 @@
 # new trial -> 초기화
 # trial state 객체를 생성하기
 
+
 # core/trial.py
 
 from core.state import TrialState
@@ -10,9 +11,14 @@ from core.segment import run_choice_segment
 
 
 def validate_trial_design(trial_design):
-    """Check whether trial design is valid."""
+    """Validate trial configuration."""
 
-    required = ["domain", "animals", "actor_order", "hint_colors"]
+    required = [
+        "domain",
+        "animals",
+        "actor_order",
+        "hint_colors",
+    ]
 
     for field in required:
         if field not in trial_design:
@@ -21,11 +27,11 @@ def validate_trial_design(trial_design):
     animals = trial_design["animals"]
     actor_order = trial_design["actor_order"]
 
-    # 반드시 서로 다른 4마리 동물
+    # 반드시 서로 다른 4마리 동물   
     if len(animals) != 4 or len(set(animals)) != 4:
         raise ValueError("Trial must contain 4 unique animals")
 
-    # self와 agent가 각각 한번씩 등장
+    # self, agent가 각 한번씩 등장
     if (
         len(actor_order) != 2
         or set(actor_order) != {"self", "agent"}
@@ -34,24 +40,30 @@ def validate_trial_design(trial_design):
             "actor_order must contain self and agent once"
         )
 
-def run_trial(context, trial_design):
-    """ Run one complete trial """
 
-    # trial setting Validate
+def run_trial(context, trial_design):
+    """Run one complete trial."""
+
+    # 1. Validate trial design
     validate_trial_design(trial_design)
 
-
-    # New trial = New state(Initialize state)
+    # 2. Initialize TrialState
     state = TrialState(
         domain=trial_design["domain"],
         animals=list(trial_design["animals"]),
     )
 
-    # Mission shown
+    # 3. Reset hints for the new trial
+    context.display.set_hints(
+        hint_colors=trial_design["hint_colors"],
+        visible=False,
+    )
+
+    # 4. Present mission
     context.display.show_mission(state.domain)
 
-    # Choice segment 1
-    choice1_results = run_choice_segment(
+    # 5. First choice segment
+    run_choice_segment(
         context=context,
         state=state,
         actor_order=trial_design["actor_order"],
@@ -60,40 +72,35 @@ def run_trial(context, trial_design):
         cumulative_scores=context.cumulative_scores,
     )
 
-    # Hint Shown
+    # 6. Reveal hints
     context.display.set_hints(
         hint_colors=trial_design["hint_colors"],
         visible=True,
     )
 
+    # 7. Second choice segment
+    run_choice_segment(
+        context=context,
+        state=state,
+        actor_order=trial_design["actor_order"],
+        stage=2,
+        hint_visible=True,
+        cumulative_scores=context.cumulative_scores,
+    )
 
-    # Choice 2
-    choice2_results = run_choice_segment(
-            context=context,
-            state=state,
-            actor_order=trial_design["actor_order"],
-            stage=2,
-            hint_visible=True,
-            cumulative_scores=context.cumulative_scores,
-        )
-
-    # Confirm trial completion
+    # 8. Validate trial completion
     if not state.is_complete():
-        raise RuntimeError(
-            "Trial ended before all turns completed"
-        )
+        raise RuntimeError("Trial incomplete")
 
-
-    # Trial Score: 두 팀의 이번 trial score를 가져옴
+    # 9. Get final trial scores
     self_trial_score = state.self_score
     agent_trial_score = state.agent_score
 
+    # 10. Update block cumulative scores
+    context.cumulative_scores["self"] += self_trial_score
+    context.cumulative_scores["agent"] += agent_trial_score
 
-    # 이번 Trial 결과를 Block 누적 점수에 더함
-    # context.cumulative_scores["self"] += self_trial_score
-    # context.cumulative_scores["agent"] += agent_trial_score
-
-    # Outcome 표시
+    # 11. Show trial result
     context.display.show_trial_result(
         self_score=self_trial_score,
         agent_score=agent_trial_score,
