@@ -1,7 +1,12 @@
 # 한 번의 선택과 점수 계산
 # core/turn.py
 
+
+# core/turn.py
+
 from dataclasses import dataclass
+
+from core.state import TrialState
 from function.calculate_score import calculate_turn_score
 
 
@@ -14,33 +19,22 @@ class TurnResult:
 
 
 def execute_turn(
-    state,
-    actor,
-    animal,
-    competence,
-    synergy,
+    state: TrialState,
+    actor: str,
+    animal: str,
+    competence: dict,
+    synergy: dict,
 ) -> TurnResult:
-    """Calculate score and update TrialState."""
+    """Calculate score and update the trial state."""
 
-    # 1. Validate actor
+    # Validate selection before scoring
     if actor not in ("self", "agent"):
         raise ValueError(f"Invalid actor: {actor}")
 
-    # 2. Validate available animal
     if animal not in state.available_animals():
         raise ValueError(f"Unavailable animal: {animal}")
 
-    # 3. Check team capacity before scoring
-    choices = (
-        state.self_choices
-        if actor == "self"
-        else state.agent_choices
-    )
-
-    if len(choices) >= 2:
-        raise ValueError(f"{actor} team is already full")
-
-    # 4. Calculate score
+    # Calculate turn score
     turn_score = calculate_turn_score(
         leader=actor,
         animal=animal,
@@ -49,17 +43,15 @@ def execute_turn(
         synergy=synergy,
     )
 
-    # 5. Update TrialState
+    # Update choices and cumulative scores
     state.add_choice(actor, animal, turn_score)
 
-    # 6. Get cumulative trial score
     cumulative_score = (
         state.self_score
         if actor == "self"
         else state.agent_score
     )
 
-    # 7. Return immutable result
     return TurnResult(
         actor=actor,
         animal=animal,
@@ -68,15 +60,24 @@ def execute_turn(
     )
 
 
-def run_turn(context, state, actor, stage, turn_number) -> TurnResult:
-    """Run selection, scoring, feedback and logging."""
+def run_turn(
+    context,
+    state: TrialState,
+    actor: str,
+    stage: str,
+    turn_number: int,
+) -> TurnResult:
+    """Run one turn: choice, score, feedback, logging."""
 
-    # 1. Get available animals
     available = state.available_animals()
 
-    # 2. Select animal
+    # Select animal
     if actor == "self":
-        animal = context.display.get_choice(available)
+        animal = context.display.get_choice(
+            state=state,
+            available=available,
+            stage=stage,
+        )
 
     elif actor == "agent":
         animal = context.agent.choose(available)
@@ -85,7 +86,7 @@ def run_turn(context, state, actor, stage, turn_number) -> TurnResult:
     else:
         raise ValueError(f"Invalid actor: {actor}")
 
-    # 3. Execute game logic
+    # Calculate score and update state
     result = execute_turn(
         state=state,
         actor=actor,
@@ -94,7 +95,7 @@ def run_turn(context, state, actor, stage, turn_number) -> TurnResult:
         synergy=context.synergy,
     )
 
-    # 4. Display cumulative scores
+    # Show feedback
     context.display.show_turn_feedback(
         actor=result.actor,
         animal=result.animal,
@@ -103,8 +104,10 @@ def run_turn(context, state, actor, stage, turn_number) -> TurnResult:
         agent_score=state.agent_score,
     )
 
-    # 5. Log result
+    # Log completed turn
     context.logger.log_turn(
+        turn_number=turn_number,
+        stage=stage,
         actor=result.actor,
         animal=result.animal,
         turn_score=result.turn_score,
