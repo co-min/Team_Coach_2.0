@@ -1,7 +1,6 @@
-# Attribute → Color Mapping
+# Color Mapping
 
-
-# task/hints.py
+# function/hints.py
 
 HINT_COLORS = {
     "low": "#FF1515",
@@ -10,5 +9,6 @@ HINT_COLORS = {
 }
 
 
-def get_hint_color(level):
+def get_hint_color(level: str) -> str:
+    """Convert an attribute level to its display color."""
     return HINT_COLORS[level.lower()]
