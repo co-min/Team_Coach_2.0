@@ -34,6 +34,7 @@ class TrialState:
         ]
 
     # 동물 선택 및 점수 누적
+    # 매 turn의 score를 합산하여 최종 trial score culculating
     def add_choice(self, actor, animal, score):
 
         if actor not in ("self", "agent"):
