@@ -1,9 +1,10 @@
 # window size, fullscreen, path 
+SCREEN_SIZE = (1280, 720)
+FULLSCREEN = False
 
-SCREEN_SIZE = (1980, 1080)
-FULLSCREEN =True
-BACKGROUND_COLOR = "black"
+BACKGROUND_COLOR = "#171C29"
 
+ANIMAL_IMAGE_SIZE = (0.24, 0.24)
 
 # Duration
 FIXATION_DURATION = 1.0

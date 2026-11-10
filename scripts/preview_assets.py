@@ -61,7 +61,7 @@ try:
     instruction.draw()
     win.flip()
 
-    event.waitKeys(keyList=["space", "escape"])
+    event.waitKeys(keyList=["esc", "escape"])
 
 finally:
     win.close()
