@@ -59,6 +59,12 @@ def run_trial(context, trial_design):
         hint_visible=False,
     )
 
+    # Hint Shown
+    context.display.set_hints(
+        hint_colors=trial_design["hint_colors"],
+        visible=True,
+    )
+
 
     # Choice 2
     choice2_results = run_choice_segment(

@@ -16,7 +16,7 @@ class FeedbackScreen:
         turn_score,
         self_score,
         agent_score,
-        duration=1.5,
+        duration=2.5,
     ):
         """Display score gained after one turn."""
 
@@ -58,7 +58,7 @@ class FeedbackScreen:
         self,
         self_score,
         agent_score,
-        duration=2.0,
+        duration=None,
     ):
         """Display final scores at trial end."""
 

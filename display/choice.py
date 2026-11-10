@@ -73,21 +73,6 @@ class ChoiceScreen:
         )
         title.draw()
 
-        # Draw attribute hint when enabled
-        if hint_visible and hint_colors:
-            color = hint_colors.get(animal)
-
-            if color:
-                hint_marker = visual.Rect(
-                    self.win,
-                    pos=(pos[0], pos[1] + 0.17),
-                    width=0.12,
-                    height=0.035,
-                    fillColor=color,
-                    lineColor=color,
-                )
-                hint_marker.draw()
-
         for animal, pos in zip(self.animals, self.positions):
             is_available = animal in available
             is_selected = animal == selected and is_available
@@ -115,6 +100,21 @@ class ChoiceScreen:
                 color="white",
             )
             name.draw()
+
+        # Draw attribute hint when enabled
+            if hint_visible and hint_colors:
+                color = hint_colors.get(animal)
+    
+                if color:
+                    hint_marker = visual.Rect(
+                        self.win,
+                        pos=(pos[0], pos[1] + 0.17),
+                        width=0.12,
+                        height=0.035,
+                        fillColor=color,
+                        lineColor=color,
+                    )
+                    hint_marker.draw()
 
             if not is_available:
                 unavailable = visual.TextStim(
