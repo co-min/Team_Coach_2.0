@@ -358,6 +358,11 @@ class ChoiceScreen:
 
 
     # 키보드 입력을 받아 참가자가 최종 선택한 동물 ID 반환
+    # TrialState에서 선택 가능한 동물 읽기
+    # 이미 선택된 동물은 owner로 표기
+    # stage에 따라 first, second 구분
+    # current calmultive score 표시
+    # 참가자 선택 반환, TrialState는 변경하지 않음. 
     def get_choice(self, available, actor="self", domain="cooking", hint_visible=False, hint_colors=None):
         """Return the animal confirmed by the participant."""
 
