@@ -1,2 +1,16 @@
-.venv
+# 가상환경
 .venv/
+
+# Python 캐시
+__pycache__/
+*.py[cod]
+
+# pytest
+.pytest_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
