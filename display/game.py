@@ -11,6 +11,7 @@ from display.feedback import FeedbackScreen
 class GameDisplay:
 
     def __init__(self, win, animals):
+        # 화면 객체 초기화
         self.win = win
 
         self.choice_screen = ChoiceScreen(win, animals)
@@ -20,6 +21,7 @@ class GameDisplay:
         self.hint_visible = False
         self.hint_colors = {}
 
+    # mission 화면
     def show_mission(self, domain, duration=1.0):
         self.domain = domain
 
@@ -35,16 +37,16 @@ class GameDisplay:
         self.win.flip()
         core.wait(duration)
 
+    # hint 1)visible 여부와 2)colors 설정 
     def set_hints(self, hint_colors, visible):
         """Update visual hint state without showing a new screen."""
         self.hint_colors = dict(hint_colors)
         self.hint_visible = visible
 
-    def get_choice(self, available, actor="self"):
+    def get_choice(self, state, stage):
         return self.choice_screen.get_choice(
-            available=available,
-            actor=actor,
-            domain=self.domain,
+            state=state,
+            stage=stage,
             hint_visible=self.hint_visible,
             hint_colors=self.hint_colors,
         )
