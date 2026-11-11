@@ -285,43 +285,38 @@ class ChoiceScreen:
 
 
     # get_choice(): 참가자 선택 처리
+    
     def get_choice(
         self,
-        available,
-        actor="self",
-        domain="cooking",
-        pick_number=1,
+        state,
+        stage,
         hint_visible=False,
         hint_colors=None,
-        owners=None,
-        self_score=0,
-        agent_score=0,
     ):
-        """방향키로 탐색하고 Space로 확정한 동물을 반환한다."""
+        """Display choices and return the selected animal."""
 
-        available = list(available)
+        available = state.available_animals()
 
         if not available:
             raise ValueError("No available animals")
 
-        if not set(available).issubset(self.animals):
-            raise ValueError("Unknown animal in available")
+        # Previous selections and their owners
+        owners = {
+            animal: "self"
+            for animal in state.self_choices
+        }
+        owners.update({
+            animal: "agent"
+            for animal in state.agent_choices
+        })
 
-        # 외부에서 전달한 소속 상태를 확인
-        if owners is None:
-            owners = {}
-
-        if any(animal in owners for animal in available):
-            raise ValueError("Owned animals cannot be available")
-
-        # 첫 번째 선택 가능한 동물에 커서 위치
+        # 선택 가능한 동물에 cursor 위치 
         index = self.animals.index(available[0])
 
         # 이전 입력이 다음 선택에 남지 않도록 초기화
         event.clearEvents(eventType="keyboard")
 
         while True:
-
             selected = self.animals[index]
 
             # 현재 상태 화면 표시
@@ -329,16 +324,15 @@ class ChoiceScreen:
                 available=available,
                 selected=selected,
                 owners=owners,
-                actor=actor,
-                domain=domain,
-                pick_number=pick_number,
+                actor="self",
+                domain=state.domain,
+                pick_number=stage,
                 hint_visible=hint_visible,
                 hint_colors=hint_colors,
-                self_score=self_score,
-                agent_score=agent_score,
+                self_score=state.self_score,
+                agent_score=state.agent_score,
             )
 
-            # 방향키 또는 Space 입력 대기
             keys = event.waitKeys(
                 keyList=[
                     MOVE_LEFT,
@@ -350,47 +344,18 @@ class ChoiceScreen:
 
             key = keys[0]
 
-            # ESC: 실험 중단
             if key == QUIT:
                 raise KeyboardInterrupt("Experiment interrupted")
 
-            # 왼쪽 이동
-            if key == MOVE_LEFT:
+            elif key == MOVE_LEFT:
                 index = self._move(index, available, -1)
 
-            # 오른쪽 이동
             elif key == MOVE_RIGHT:
                 index = self._move(index, available, 1)
 
-            # Space: 동물 선택 확정
             elif key == CONFIRM:
+                return self.animals[index]
 
-                chosen_animal = self.animals[index]
-
-                # 확정된 선택을 소속 정보에 저장
-                owners[chosen_animal] = actor
-
-                # 해당 동물을 선택 불가능 상태로 변경
-                remaining = [
-                    animal for animal in available
-                    if animal != chosen_animal
-                ]
-
-                # 삼각형 대신 SELF/AGENT PICK 표시
-                self.draw(
-                    available=remaining,
-                    selected=None,
-                    owners=owners,
-                    actor=actor,
-                    domain=domain,
-                    pick_number=pick_number,
-                    hint_visible=hint_visible,
-                    hint_colors=hint_colors,
-                    self_score=self_score,
-                    agent_score=agent_score,
-                )
-
-                return chosen_animal
 
     # 키보드 입력을 받아 참가자가 최종 선택한 동물 ID 반환
     def get_choice(self, available, actor="self", domain="cooking", hint_visible=False, hint_colors=None):
