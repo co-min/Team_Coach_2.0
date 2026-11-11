@@ -285,6 +285,12 @@ class ChoiceScreen:
 
 
     # get_choice(): 참가자 선택 처리
+    # 키보드 입력을 받아 참가자가 최종 선택한 동물 ID 반환
+        # TrialState에서 선택 가능한 동물 읽기
+        # 이미 선택된 동물은 owner로 표기
+        # stage에 따라 first, second 구분
+        # current calmultive score 표시
+        # 참가자 선택 반환, TrialState는 변경하지 않음. 
     
     def get_choice(
         self,
@@ -356,54 +362,6 @@ class ChoiceScreen:
             elif key == CONFIRM:
                 return self.animals[index]
 
-
-    # 키보드 입력을 받아 참가자가 최종 선택한 동물 ID 반환
-    # TrialState에서 선택 가능한 동물 읽기
-    # 이미 선택된 동물은 owner로 표기
-    # stage에 따라 first, second 구분
-    # current calmultive score 표시
-    # 참가자 선택 반환, TrialState는 변경하지 않음. 
-    def get_choice(self, available, actor="self", domain="cooking", hint_visible=False, hint_colors=None):
-        """Return the animal confirmed by the participant."""
-
-        available = list(available)
-
-        if not available:
-            raise ValueError("No available animals")
-
-        # Start on the first available animal
-        index = self.animals.index(available[0])
-
-        while True:
-            selected = self.animals[index]
-
-            self.draw(
-                available=available,
-                selected=selected,
-                actor=actor,
-                domain=domain,
-                hint_visible=hint_visible,
-                hint_colors=hint_colors,
-            )
-
-            # 지정한 키 입력 발생할 때까지 기다리는 함수
-            keys = event.waitKeys(
-                keyList=[MOVE_LEFT, MOVE_RIGHT, CONFIRM, QUIT]
-            )
-
-            key = keys[0]
-
-            if key == QUIT:
-                raise KeyboardInterrupt("Experiment interrupted")
-
-            if key == MOVE_LEFT:
-                index = self._move(index, available, -1)
-
-            elif key == MOVE_RIGHT:
-                index = self._move(index, available, 1)
-
-            elif key == CONFIRM:
-                return self.animals[index]
 
 
             
