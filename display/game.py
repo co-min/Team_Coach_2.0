@@ -66,8 +66,9 @@ class GameDisplay:
             agent_score=agent_score,
         )
 
-    def show_trial_result(self, self_score, agent_score):
+    def show_trial_result(self, self_score, agent_score, winner):
         self.feedback_screen.show_trial_result(
             self_score=self_score,
             agent_score=agent_score,
+            winner=winner
         )

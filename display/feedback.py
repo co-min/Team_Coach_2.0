@@ -63,12 +63,15 @@ class FeedbackScreen:
     ):
         """Display final scores at trial end."""
 
-        if self_score > agent_score:
-            result = "SELF WINS"
-        elif agent_score > self_score:
-            result = "AGENT WINS"
-        else:
-            result = "DRAW"
+        # Convert winner to display text
+        result_labels = {
+            "self": "SELF WINS",
+            "agent": "AGENT WINS",
+            "draw": "DRAW",
+        }
+
+        result = result_labels[winner]
+
 
         title = visual.TextStim(
             self.win,
