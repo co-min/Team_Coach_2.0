@@ -8,7 +8,6 @@ class FeedbackScreen:
 
     def __init__(self, win):
         self.win = win
-
     # 어떤 actor가 어떤 동물을 선택했는지, 이번 turn 획득한 점수, 현재 trial에서 self와 agent가 누적한 점수
     def show_turn_feedback(
         self,
@@ -59,10 +58,10 @@ class FeedbackScreen:
         self,
         self_score,
         agent_score,
+        winner,
         duration=3.0,
     ):
-        """Display final scores at trial end."""
-
+        """Display final scores and winner."""
         # Convert winner to display text
         result_labels = {
             "self": "SELF WINS",
@@ -71,7 +70,6 @@ class FeedbackScreen:
         }
 
         result = result_labels[winner]
-
 
         title = visual.TextStim(
             self.win,
@@ -92,7 +90,7 @@ class FeedbackScreen:
             color="white",
         )
 
-        winner = visual.TextStim(
+        winner_text = visual.TextStim(
             self.win,
             text=result,
             pos=(0, -0.23),
@@ -102,7 +100,7 @@ class FeedbackScreen:
 
         title.draw()
         scores.draw()
-        winner.draw()
+        winner_text.draw()
 
         self.win.flip()
         core.wait(duration)
