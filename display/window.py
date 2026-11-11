@@ -1,4 +1,5 @@
 # display/window.py
+# psychopy window 생성 및 종료
 
 from psychopy import visual
 
