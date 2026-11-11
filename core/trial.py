@@ -4,6 +4,7 @@
 # trial state 객체를 생성하기
 
 
+
 # core/trial.py
 
 from core.state import TrialState
@@ -27,11 +28,11 @@ def validate_trial_design(trial_design):
     animals = trial_design["animals"]
     actor_order = trial_design["actor_order"]
 
-    # 반드시 서로 다른 4마리 동물   
+    # Exactly four unique animals
     if len(animals) != 4 or len(set(animals)) != 4:
         raise ValueError("Trial must contain 4 unique animals")
 
-    # self, agent가 각 한번씩 등장
+    # Self and Agent must each appear once
     if (
         len(actor_order) != 2
         or set(actor_order) != {"self", "agent"}
@@ -53,7 +54,7 @@ def run_trial(context, trial_design):
         animals=list(trial_design["animals"]),
     )
 
-    # 3. Reset hints for the new trial
+    # 3. Reset hints
     context.display.set_hints(
         hint_colors=trial_design["hint_colors"],
         visible=False,
@@ -62,14 +63,12 @@ def run_trial(context, trial_design):
     # 4. Present mission
     context.display.show_mission(state.domain)
 
-    # 5. First choice segment
+    # 5. Choice Stage 1 (Turn 1, Turn 2)
     run_choice_segment(
         context=context,
         state=state,
         actor_order=trial_design["actor_order"],
         stage=1,
-        hint_visible=False,
-        cumulative_scores=context.cumulative_scores,
     )
 
     # 6. Reveal hints
@@ -78,14 +77,12 @@ def run_trial(context, trial_design):
         visible=True,
     )
 
-    # 7. Second choice segment
+    # 7. Choice Stage 2 (Turn 3, Turn 4)
     run_choice_segment(
         context=context,
         state=state,
         actor_order=trial_design["actor_order"],
         stage=2,
-        hint_visible=True,
-        cumulative_scores=context.cumulative_scores,
     )
 
     # 8. Validate trial completion
@@ -100,13 +97,14 @@ def run_trial(context, trial_design):
     context.cumulative_scores["self"] += self_trial_score
     context.cumulative_scores["agent"] += agent_trial_score
 
-    # 승패 판단
+    # 11. Determine winner
     winner = state.winner()
 
-    # 11. Show trial result
+    # 12. Display trial result
     context.display.show_trial_result(
         self_score=self_trial_score,
         agent_score=agent_trial_score,
+        winner=winner,
     )
 
     return state
