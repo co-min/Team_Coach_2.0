@@ -100,6 +100,9 @@ def run_trial(context, trial_design):
     context.cumulative_scores["self"] += self_trial_score
     context.cumulative_scores["agent"] += agent_trial_score
 
+    # 승패 판단
+    winner = state.winner()
+
     # 11. Show trial result
     context.display.show_trial_result(
         self_score=self_trial_score,

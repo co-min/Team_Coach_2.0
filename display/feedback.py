@@ -9,6 +9,7 @@ class FeedbackScreen:
     def __init__(self, win):
         self.win = win
 
+    # 어떤 actor가 어떤 동물을 선택했는지, 이번 turn 획득한 점수, 현재 trial에서 self와 agent가 누적한 점수
     def show_turn_feedback(
         self,
         actor,
@@ -58,7 +59,7 @@ class FeedbackScreen:
         self,
         self_score,
         agent_score,
-        duration=None,
+        duration=3.0,
     ):
         """Display final scores at trial end."""
 
