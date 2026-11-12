@@ -6,6 +6,7 @@ import random
 
 from core.context import ExperimentContext
 from core.trial import run_trial
+from config.animals import ANIMAL_SETS
 
 from display.window import create_window
 from display.game import GameDisplay

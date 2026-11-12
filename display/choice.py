@@ -27,9 +27,9 @@ ANIMAL_DIR = PROJECT_ROOT / "assets" / "animals"
 class ChoiceScreen:
 
     # __init__: 화면에 사용할 동물 이미지 미리 생성
-    def __init__(self, win, animals):
+    def __init__(self, win, animals, animal_images):
         self.win = win
-        self.animals = list(animals)
+        self.animals = animals
 
         if len(self.animals) != 4 or len(set(self.animals)) != 4:
             raise ValueError("Exactly four unique animals are required")
@@ -48,6 +48,7 @@ class ChoiceScreen:
         win_aspect = win.size[0] / win.size[1]
 
         for animal, pos in zip(self.animals, self.positions):
+            image_name = animal_images[animal]
             image_path = ANIMAL_DIR / f"{animal.lower()}.png"
 
             if not image_path.is_file():
@@ -60,7 +61,10 @@ class ChoiceScreen:
                 win,
                 image=str(image_path),
                 pos=pos,
-                size=(ANIMAL_IMAGE_HEIGHT * img_aspect / win_aspect, ANIMAL_IMAGE_HEIGHT),
+                size=(
+                    ANIMAL_IMAGE_HEIGHT * img_aspect / win_aspect, 
+                    ANIMAL_IMAGE_HEIGHT
+                    ),
                 units="norm",
             )
 

@@ -10,11 +10,11 @@ from display.feedback import FeedbackScreen
 
 class GameDisplay:
 
-    def __init__(self, win, animals):
+    def __init__(self, win, animals, animal_images):
         # 화면 객체 초기화
         self.win = win
 
-        self.choice_screen = ChoiceScreen(win, animals)
+        self.choice_screen = ChoiceScreen(win, animals, animal_images)
         self.feedback_screen = FeedbackScreen(win)
 
         self.domain = None
