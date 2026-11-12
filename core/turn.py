@@ -74,11 +74,9 @@ def run_turn(
     # Select animal
     if actor == "self":
         animal = context.display.get_choice(
-        state=state,
-        stage=stage,
-        hint_visible=(stage == 2),
-        hint_colors=context.hint_colors,
-    )
+            state=state,
+            stage=stage,
+        )
 
     elif actor == "agent":
         animal = context.agent.choose(available)
