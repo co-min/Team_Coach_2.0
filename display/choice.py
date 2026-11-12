@@ -16,7 +16,12 @@ from pathlib import Path
 from PIL import Image
 from psychopy import visual, event
 
-from config.settings import ANIMAL_IMAGE_HEIGHT
+from config.settings import (
+    ANIMAL_IMAGE_HEIGHT,
+    AGENT_THINK_DURATION,
+    AGENT_MOVE_DURATION,
+    AGENT_CONFIRM_DURATION,
+)
 from config.keymapping import MOVE_LEFT, MOVE_RIGHT, CONFIRM, QUIT
 
 # 이미지 경로
@@ -310,17 +315,9 @@ class ChoiceScreen:
         if not available:
             raise ValueError("No available animals")
 
-        # Previous selections and their owners
-        owners = {
-            animal: "self"
-            for animal in state.self_choices
-        }
-        owners.update({
-            animal: "agent"
-            for animal in state.agent_choices
-        })
+        owners = self._owners(state)
 
-        # 선택 가능한 동물에 cursor 위치 
+        # 선택 가능한 동물에 cursor 위치
         index = self.animals.index(available[0])
 
         # 이전 입력이 다음 선택에 남지 않도록 초기화
@@ -366,6 +363,72 @@ class ChoiceScreen:
             elif key == CONFIRM:
                 return self.animals[index]
 
+    # show_agent_choice(): agent 선택 장면
+    # self와 같은 화면에서 커서가 이동하다 agent가 고른 동물에서 멈춤
+    # 선택은 이미 agent가 결정했으므로 화면 표시만 담당
+    def show_agent_choice(
+        self,
+        state,
+        stage,
+        animal,
+        hint_visible=False,
+        hint_colors=None,
+    ):
+        """Animate the cursor moving to the agent's chosen animal."""
+
+        available = state.available_animals()
+
+        if animal not in available:
+            raise ValueError(f"Unavailable animal: {animal}")
+
+        owners = self._owners(state)
+        index = self.animals.index(available[0])
+        target = self.animals.index(animal)
+
+        event.clearEvents(eventType="keyboard")
+
+        def show(duration):
+            self.draw(
+                available=available,
+                selected=self.animals[index],
+                owners=owners,
+                actor="agent",
+                domain=state.domain,
+                pick_number=stage,
+                hint_visible=hint_visible,
+                hint_colors=hint_colors,
+                self_score=state.self_score,
+                agent_score=state.agent_score,
+            )
+            self._wait(duration)
+
+        # 처음 위치에서 잠시 고민
+        show(AGENT_THINK_DURATION)
+
+        # 목표 동물까지 오른쪽으로 한 칸씩 이동
+        while index != target:
+            index = self._move(index, available, 1)
+            show(AGENT_MOVE_DURATION)
+
+        # 최종 선택 유지
+        show(AGENT_CONFIRM_DURATION)
+
+    # 이미 선택된 동물과 그 소속(self/agent)
+    def _owners(self, state):
+        owners = {
+            animal: "self"
+            for animal in state.self_choices
+        }
+        owners.update({
+            animal: "agent"
+            for animal in state.agent_choices
+        })
+        return owners
+
+    # 대기 중에도 ESC로 종료 가능
+    def _wait(self, duration):
+        if event.waitKeys(maxWait=duration, keyList=[QUIT]):
+            raise KeyboardInterrupt("Experiment interrupted")
 
 
             

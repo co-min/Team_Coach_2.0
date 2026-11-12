@@ -80,7 +80,11 @@ def run_turn(
 
     elif actor == "agent":
         animal = context.agent.choose(available)
-        context.display.show_agent_choice(animal)
+        context.display.show_agent_choice(
+            state=state,
+            stage=stage,
+            animal=animal,
+        )
 
     else:
         raise ValueError(f"Invalid actor: {actor}")

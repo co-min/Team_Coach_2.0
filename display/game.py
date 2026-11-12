@@ -51,9 +51,14 @@ class GameDisplay:
             hint_colors=self.hint_colors,
         )
 
-    def show_agent_choice(self, animal):
-        # Temporary placeholder for Agent animation.
-        pass
+    def show_agent_choice(self, state, stage, animal):
+        self.choice_screen.show_agent_choice(
+            state=state,
+            stage=stage,
+            animal=animal,
+            hint_visible=self.hint_visible,
+            hint_colors=self.hint_colors,
+        )
 
     def show_turn_feedback(
         self, actor, animal, turn_score, self_score, agent_score
