@@ -49,7 +49,7 @@ class ChoiceScreen:
 
         for animal, pos in zip(self.animals, self.positions):
             image_name = animal_images[animal]
-            image_path = ANIMAL_DIR / f"{animal.lower()}.png"
+            image_path = ANIMAL_DIR / f"{image_name}.png"
 
             if not image_path.is_file():
                 raise FileNotFoundError(image_path)

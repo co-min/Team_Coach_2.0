@@ -54,6 +54,7 @@ def main():
 
     # 1. Test animals
     animals = ["A", "B", "C", "D"]
+    animal_images = ANIMAL_SETS[1]
 
     # 2. True attributes (test values)
     competence = {
@@ -94,7 +95,7 @@ def main():
 
     try:
         # 5. Initialize display, agent, logger
-        display = GameDisplay(win, animals)
+        display = GameDisplay(win, animals, animal_images)
         agent = RandomAgent(seed=42)
         logger = TestLogger()
 
